@@ -1,0 +1,35 @@
+service: image-analysis
+
+frameworkVersion: '3'
+	
+plugins:
+  - serverless-prune-plugin
+  - serverless-offline
+
+custom:
+  prune:
+    automatic: true
+    number: 0
+  
+provider:
+  name: aws
+  runtime: nodejs14.x
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - rekognition:DetectLabels
+      Resource:
+        - '*'
+    - Effect: Allow
+      Action:
+        - translate:translateText
+      Resource:
+        - '*'
+
+functions:
+  img-analysis:
+    handler: handler.main
+    events:
+      - http:
+          path: /analyse
+          method: get
