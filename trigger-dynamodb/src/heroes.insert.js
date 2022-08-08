@@ -1,9 +1,18 @@
+const decoratorValidator = require('./util/decoratorValidator')
 const uuid = require('uuid');
+const Joi = require('joi');
 
 class Handler {
     constructor({ dynamoDb}) {
         this.dynamoDb = dynamoDb;
         this.dynamoDbTable = process.env.DYNAMODB_TABLE;
+    }
+
+    static validator(data){
+        return Joi.object().keys({
+            name: Joi.string().max(100).min(2).required(),
+            power: Joi.number().required(),
+        }).validate(data);
     }
 
     prepareData(data) {
@@ -40,9 +49,9 @@ class Handler {
 
     async main(event) {
         try {
-            const data = JSON.parse(event.body);
+            const data = event.body
             const dbParams = await this.prepareData(data);
-            await this.insertItem(dbParams);
+            // await this.insertItem(dbParams);
             return this.handleSuccess(dbParams.Item);
 
         } catch (error) {
@@ -54,9 +63,12 @@ class Handler {
 
 const AWS = require('aws-sdk');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
-
 const handler = new Handler({
     dynamoDb
 });
 
-module.exports = handler.main.bind(handler);
+module.exports = decoratorValidator(
+    handler.main.bind(handler), 
+    Handler.validator, 
+    'body'
+);
