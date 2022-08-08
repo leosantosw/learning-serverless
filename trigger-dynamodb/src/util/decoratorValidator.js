@@ -3,6 +3,7 @@ const decoratorValidator = (fn, validate, argsType ) => {
         const data = JSON.parse(event[argsType]);
         const { error, value } = validate(data, { abortEarly: true });
         event[argsType] = value;
+        
         if (!error) {
             return fn.apply(this, arguments)
         }

@@ -1,4 +1,5 @@
 const decoratorValidator = require('./util/decoratorValidator')
+const globalEnum = require('./util/globalEnum');
 const uuid = require('uuid');
 const Joi = require('joi');
 
@@ -70,5 +71,5 @@ const handler = new Handler({
 module.exports = decoratorValidator(
     handler.main.bind(handler), 
     Handler.validator, 
-    'body'
+    globalEnum.ARG_TYPE.BODY
 );
