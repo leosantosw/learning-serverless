@@ -52,7 +52,7 @@ class Handler {
         try {
             const data = event.body
             const dbParams = await this.prepareData(data);
-            // await this.insertItem(dbParams);
+            await this.insertItem(dbParams);
             return this.handleSuccess(dbParams.Item);
 
         } catch (error) {
